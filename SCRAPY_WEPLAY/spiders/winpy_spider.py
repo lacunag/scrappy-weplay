@@ -1,6 +1,5 @@
-from urllib.error import URLError
-from xml.etree.ElementTree import Comment
 import scrapy
+from SCRAPY_WEPLAY.items import ScrapyWeplayItem 
 
 class WinpySpider(scrapy.Spider):
     name = 'winpy'
@@ -14,14 +13,17 @@ class WinpySpider(scrapy.Spider):
         'https://www.weplay.cl/consolas/consolas-xbox-sx.html',
         'https://www.weplay.cl/consolas/consolas-xbox-one.html',
         'https://www.weplay.cl/consolas/consolas-xbox-360.html',
-        'https://www.weplay.cl/consolas/consolas-ps3.html',
-        'https://www.weplay.cl/consolas/consolas-ps4.html',
     ]
 
     def parse(self, response):
-        for title in response.css('.product-item-details'):
-            yield {'title': title.css('.product-item-link::text').get().strip(), 'link': title.css('::attr(href)').get(), 'price': title.css('.price::text').get(), 'special_price': title.css('.special-price .price ::text').get()}
+        
+        quote_item = ScrapyWeplayItem()
+        quote_item['title'] = response.xpath('//h1[@class="product-name"]/text()').get()
+        quote_item['link'] = response.url
+        quote_item['price'] = response.xpath('//span[@class="price"]/text()').get()
+        quote_item['special_price'] = response.xpath('//span[@class="special-price"]/text()').get()
+        yield quote_item
 
         for next_page in response.css('a.next'):
             yield response.follow(next_page, self.parse)
-
+        
