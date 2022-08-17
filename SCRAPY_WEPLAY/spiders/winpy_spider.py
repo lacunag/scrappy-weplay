@@ -3,6 +3,7 @@ import scrapy
 
 class WinpySpider(scrapy.Spider):
     name = 'winpy'
+    allowed_domains = ['www.weplay.cl']
     start_urls = ['https://www.weplay.cl/consolas/consolas-ps5.html', 'https://www.weplay.cl/consolas/consolas-switch.html']
 
     def parse(self, response):
