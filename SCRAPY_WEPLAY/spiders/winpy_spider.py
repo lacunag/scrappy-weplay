@@ -10,20 +10,19 @@ class WinpySpider(scrapy.Spider):
     start_urls = [
         'https://www.weplay.cl/consolas/consolas-ps5.html', 
         'https://www.weplay.cl/consolas/consolas-switch.html',
-        'https://www.weplay.cl/consolas/consolas-xbox-sx.html',
-        'https://www.weplay.cl/consolas/consolas-xbox-one.html',
-        'https://www.weplay.cl/consolas/consolas-xbox-360.html',
     ]
 
     def parse(self, response):
         
         quote_item = ScrapyWeplayItem()
-        quote_item['title'] = response.xpath('//h1[@class="product-name"]/text()').get()
-        quote_item['link'] = response.url
-        quote_item['price'] = response.xpath('//span[@class="price"]/text()').get()
-        quote_item['special_price'] = response.xpath('//span[@class="special-price"]/text()').get()
-        yield quote_item
+
+        for title in response.css('.product-item-details'):
+            
+            quote_item['title'] = title.css('.product-item-link::text').get().strip()
+            quote_item['link'] = title.css('::attr(href)').get()
+            quote_item['price'] = title.css('.price::text').get()
+            quote_item['special_price'] = title.css('.special-price .price ::text').get()
+            yield quote_item
 
         for next_page in response.css('a.next'):
             yield response.follow(next_page, self.parse)
-        
