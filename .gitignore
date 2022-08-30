@@ -1,0 +1,7 @@
+# Archivos
+*.json
+*.pyc
+
+# Directorios
+SCRAPY_WEPLAY/__pycache__/
+SCRAPY_WEPLAY/spiders/__pycache__/
